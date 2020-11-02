@@ -24,7 +24,10 @@ namespace CustomProject
 		{
 			switch (Action.SelectAction()) {
 				case ConcreteAction.Attack:
-					GameObject.Attack(player, ref monster);
+					GameObject.Attack(ref player, ref monster);
+					break;
+				case ConcreteAction.Dodge:
+					GameObject.Dodge(ref player);
 					break;
 				default:
 					Console.WriteLine("-> player: is waiting");
@@ -34,7 +37,7 @@ namespace CustomProject
 
 		static void MonsterAction(ref GameObject monster, ref GameObject player)
 		{
-			GameObject.Attack(monster, ref player);
+			GameObject.Attack(ref monster, ref player);
 		}
 
 		static void GameOver(in GameObject player, in GameObject monster)

@@ -6,6 +6,7 @@ namespace CustomProject
 	{
 		Nothing = default,
 		Attack,
+		Dodge,
 	}
 
 	static class Action
@@ -13,6 +14,7 @@ namespace CustomProject
 		static Choice[] choices = new Choice[] {
 			new Choice{ selector = "n", action = ConcreteAction.Nothing },
 			new Choice{ selector = "a", action = ConcreteAction.Attack },
+			new Choice{ selector = "d", action = ConcreteAction.Dodge },
 		};
 
 		struct Choice
@@ -29,6 +31,7 @@ namespace CustomProject
 			Console.WriteLine(string.Join(", ", Action.choices));
 			switch (Console.ReadLine()) {
 				case "a": return ConcreteAction.Attack;
+				case "d": return ConcreteAction.Dodge;
 				case "n":
 				default: return ConcreteAction.Nothing;
 			}

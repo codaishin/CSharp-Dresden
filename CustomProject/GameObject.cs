@@ -12,6 +12,7 @@ namespace CustomProject
 		public int damage;
 		public int evasion;
 		public int accuracy;
+		public bool dodging;
 
 		public static void Init(out GameObject player, out GameObject monster)
 		{
@@ -39,9 +40,10 @@ namespace CustomProject
 			}
 		}
 
-		public static void Attack(in GameObject attkr, ref GameObject trgt)
+		public static void Attack(ref GameObject attkr, ref GameObject trgt)
 		{
 			Console.WriteLine($"-> {attkr.name}: attacks {trgt.name}");
+			attkr.dodging = false;
 			if (GameObject.Hit(attkr, trgt)) {
 				trgt.hp -= attkr.damage;
 				Console.WriteLine($"-> {attkr.damage} damage");
@@ -54,6 +56,12 @@ namespace CustomProject
 		{
 			int hitMax = attkr.accuracy + trgt.evasion + 1;
 			return GameObject.rand.Next(0, hitMax) > trgt.evasion;
+		}
+
+		public static void Dodge(ref GameObject dodger)
+		{
+			Console.WriteLine($"-> {dodger.name}: prepares to dodge");
+			dodger.dodging = true;
 		}
 	}
 }

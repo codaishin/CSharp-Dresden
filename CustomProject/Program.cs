@@ -3,91 +3,54 @@ using System.Threading;
 
 namespace CustomProject
 {
-	enum Action
-	{
-		Nothing = default,
-		Attack,
-	}
-
-	struct GameObject
-	{
-		public int hp;
-		public int damage;
-		public string name;
-	}
-
-	struct Option
-	{
-		public string selector;
-		public Action action;
-
-    public override string ToString() => $"{this.selector}: {this.action}";
-	}
-
 	class Program
 	{
-		static Option[] options = new Option[] {
-			new Option{ selector = "n", action = Action.Nothing },
-			new Option{ selector = "a", action = Action.Attack },
-		};
-
-		static void Render(params GameObject[] objects)
-		{
-			foreach (GameObject obj in objects)
-			{
-				Console.WriteLine($"| {obj.name} hp: {obj.hp} |");
-			}
-		}
-
-		static void Attack(in GameObject attkr, ref GameObject trgt)
-		{
-			Console.WriteLine(
-				$"-> {attkr.name}: attacks {trgt.name} for {attkr.damage} damage"
-			);
-			trgt.hp -= attkr.damage;
-		}
-
-		static Action SelectAction()
-		{
-			Console.WriteLine("What do you want to do?");
-			Console.WriteLine(string.Join(", ", options));
-			switch (Console.ReadLine()) {
-				case "a": return Action.Attack;
-				case "n":
-				default: return Action.Nothing;
-			}
-		}
-
-		static void Init(out GameObject player, out GameObject monster)
-		{
-			player = new GameObject { name = "player", hp = 50, damage = 10 };
-			monster = new GameObject { name = "monster", hp = 40, damage = 5 };
-		}
-
-		static void Main(string[] args)
+		static void GameLoop(ref GameObject player, ref GameObject monster)
 		{
 			bool playerTurn = true;
-			Program.Init(out GameObject player, out GameObject monster);
-
-			while (monster.hp > 0 && player.hp > 0)
-			{
-				Program.Render(player, monster);
+			while (monster.hp > 0 && player.hp > 0) {
+				GameObject.Render(player, monster);
 				if (playerTurn) {
-					switch (Program.SelectAction()) {
-						case Action.Attack: Program.Attack(player, ref monster); break;
-					}
+					Program.PlayerAction(ref player, ref monster);
 				} else {
-					Program.Attack(monster, ref player);
+					Program.MonsterAction(ref monster, ref player);
 				}
 				playerTurn = !playerTurn;
 				Thread.Sleep(1000);
 			}
+		}
 
+		static void PlayerAction(ref GameObject player, ref GameObject monster)
+		{
+			switch (Action.SelectAction()) {
+				case ConcreteAction.Attack:
+					GameObject.Attack(player, ref monster);
+					break;
+				default:
+					Console.WriteLine("-> player: is waiting");
+					break;
+			}
+		}
+
+		static void MonsterAction(ref GameObject monster, ref GameObject player)
+		{
+			GameObject.Attack(monster, ref player);
+		}
+
+		static void GameOver(in GameObject player, in GameObject monster)
+		{
 			if (monster.hp <= 0) {
 				Console.WriteLine("You won");
 			} else {
 				Console.WriteLine("You lost");
 			}
+		}
+
+		static void Main(string[] _)
+		{
+			GameObject.Init(out GameObject player, out GameObject monster);
+			Program.GameLoop(ref player, ref monster);
+			Program.GameOver(player, monster);
 		}
   }
 }

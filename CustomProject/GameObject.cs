@@ -31,7 +31,7 @@ namespace CustomProject
 			monster = new GameObject {
 				name = "monster",
 				hp = 60,
-				damage = 20,
+				damage = 15,
 				accuracy = 60,
 				evasion = 10,
 			};

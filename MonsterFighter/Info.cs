@@ -1,6 +1,6 @@
 using System;
 
-namespace CustomProject
+namespace MonsterFighter
 {
 	static class Info
 	{

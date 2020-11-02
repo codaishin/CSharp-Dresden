@@ -1,6 +1,6 @@
 using System;
 
-namespace CustomProject
+namespace MonsterFighter
 {
 	struct GameObject
 	{

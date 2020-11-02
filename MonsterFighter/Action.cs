@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace CustomProject
+namespace MonsterFighter
 {
 	enum ConcreteAction
 	{

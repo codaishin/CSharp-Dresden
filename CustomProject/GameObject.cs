@@ -6,13 +6,18 @@ namespace CustomProject
 	{
 		private static Random rand = new Random();
 
+		// Name
 		public string name;
 
+		// Stats
 		public int hp;
 		public int damage;
 		public int evasion;
 		public int accuracy;
+
+		// Set in game loop
 		public bool dodging;
+		public int consecutiveAttacks;  // consecutive attacks weaken outgoing damage
 
 		public static void Init(out GameObject player, out GameObject monster)
 		{
@@ -21,13 +26,13 @@ namespace CustomProject
 				hp = 50,
 				damage = 10,
 				accuracy = 50,
-				evasion = 80,
+				evasion = 60,
 			};
 			monster = new GameObject {
 				name = "monster",
-				hp = 40,
-				damage = 5,
-				accuracy = 100,
+				hp = 60,
+				damage = 20,
+				accuracy = 60,
 				evasion = 10,
 			};
 		}
@@ -43,25 +48,38 @@ namespace CustomProject
 		public static void Attack(ref GameObject attkr, ref GameObject trgt)
 		{
 			Console.WriteLine($"-> {attkr.name}: attacks {trgt.name}");
-			attkr.dodging = false;
 			if (GameObject.Hit(attkr, trgt)) {
-				trgt.hp -= attkr.damage;
-				Console.WriteLine($"-> {attkr.damage} damage");
+				int dmg = attkr.damage - attkr.consecutiveAttacks;
+				trgt.hp -= dmg;
+				Console.WriteLine($"-> {dmg} damage");
+			} else if (trgt.dodging) {
+				Console.WriteLine($"-> DODGED!");
 			} else {
-				Console.WriteLine("-> MISS!");
+				Console.WriteLine($"-> MISS!");
 			}
+			attkr.dodging = false;
+			++attkr.consecutiveAttacks;
 		}
 
 		private static bool Hit(in GameObject attkr, in GameObject trgt)
 		{
-			int hitMax = attkr.accuracy + trgt.evasion + 1;
-			return GameObject.rand.Next(0, hitMax) > trgt.evasion;
+			int evasion = trgt.dodging ? trgt.evasion * 2 : trgt.evasion;
+			int hitMax = attkr.accuracy + evasion + 1;
+			int hit = GameObject.rand.Next(0, hitMax);
+			return hit > evasion;
 		}
 
 		public static void Dodge(ref GameObject dodger)
 		{
 			Console.WriteLine($"-> {dodger.name}: prepares to dodge");
 			dodger.dodging = true;
+			dodger.consecutiveAttacks = 0;
+		}
+
+		public static void Idle(ref GameObject obj)
+		{
+			obj.dodging = false;
+			obj.consecutiveAttacks = 0;
 		}
 	}
 }

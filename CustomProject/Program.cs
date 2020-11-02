@@ -30,6 +30,7 @@ namespace CustomProject
 					GameObject.Dodge(ref player);
 					break;
 				default:
+					GameObject.Idle(ref player);
 					Console.WriteLine("-> player: is waiting");
 					break;
 			}

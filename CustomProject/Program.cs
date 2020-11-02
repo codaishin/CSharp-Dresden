@@ -52,7 +52,12 @@ namespace CustomProject
 
 		static void Main(string[] _)
 		{
+			Info.Intro();
 			GameObject.Init(out GameObject player, out GameObject monster);
+			Console.WriteLine();
+			Info.Stats(player);
+			Info.Stats(monster);
+			Console.WriteLine();
 			Program.GameLoop(ref player, ref monster);
 			Program.GameOver(player, monster);
 		}

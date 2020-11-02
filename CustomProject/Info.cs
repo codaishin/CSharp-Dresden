@@ -13,7 +13,7 @@ namespace CustomProject
 			"  overall damage though.",
 			"- You can also choose to do nothing, which will reset your full damage",
 			"- You can also choose to dodge, which in addition to resetting your",
-			"  full damage will also double your evasion chance.",
+			"  full damage will also double your evasion for one round.",
 			"",
 			"Have fun!",
 			"",
@@ -26,7 +26,7 @@ namespace CustomProject
 
 		public static void Stats(in GameObject obj)
 		{
-			string[] fmts = new string[] {
+			string[] stats = new string[] {
 				$"{obj.name.ToUpper()}",
 				"├─ Defense:",
 				$"│  ├─ Hp:       {obj.hp}",
@@ -35,7 +35,7 @@ namespace CustomProject
 				$"   ├─ Damage:   {obj.damage}",
 				$"   └─ Accuracy: {obj.accuracy}",
 			};
-			Console.WriteLine(string.Join("\n", fmts));
+			Console.WriteLine(string.Join("\n", stats));
 		}
 	}
 }

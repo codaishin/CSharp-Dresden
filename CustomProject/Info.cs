@@ -19,9 +19,17 @@ namespace CustomProject
 			"",
 		};
 
+		private static void AnyKeyContinue()
+		{
+			Console.Write("Press any key to continue...");
+			Console.ReadKey();
+			Console.WriteLine("\r                             ");
+		}
+
 		public static void Intro()
 		{
 			Console.WriteLine(string.Join("\n", Info.intro));
+			Info.AnyKeyContinue();
 		}
 
 		public static void Stats(in GameObject obj)
@@ -36,6 +44,7 @@ namespace CustomProject
 				$"   └─ Accuracy: {obj.accuracy}",
 			};
 			Console.WriteLine(string.Join("\n", stats));
+			Info.AnyKeyContinue();
 		}
 	}
 }

@@ -78,6 +78,7 @@ namespace CustomProject
 
 		public static void Idle(ref GameObject obj)
 		{
+			Console.WriteLine($"-> {obj.name}: does nothing");
 			obj.dodging = false;
 			obj.consecutiveAttacks = 0;
 		}

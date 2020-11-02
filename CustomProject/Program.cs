@@ -31,7 +31,6 @@ namespace CustomProject
 					break;
 				default:
 					GameObject.Idle(ref player);
-					Console.WriteLine("-> player: is waiting");
 					break;
 			}
 		}

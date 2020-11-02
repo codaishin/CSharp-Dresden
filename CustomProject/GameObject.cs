@@ -49,7 +49,7 @@ namespace CustomProject
 		{
 			Console.WriteLine($"-> {attkr.name}: attacks {trgt.name}");
 			if (GameObject.Hit(attkr, trgt)) {
-				int dmg = attkr.damage - attkr.consecutiveAttacks;
+				int dmg = Math.Max(attkr.damage - attkr.consecutiveAttacks, 1);
 				trgt.hp -= dmg;
 				Console.WriteLine($"-> {dmg} damage");
 			} else if (trgt.dodging) {

@@ -23,7 +23,8 @@ namespace BattleShip1PDataDriven
 		                                 out Field field)
 		{
 			int x, y;
-			if (Input.CharToNum(value[0], battleField.GetLength(1), out y) &&
+			if (string.IsNullOrEmpty(value) == false &&
+			    Input.CharToNum(value[0], battleField.GetLength(1), out y) &&
 			    int.TryParse(value.Substring(1), out x) &&
 					x > 0 && x <= battleField.GetLength(0)) {
 				x -= 1;

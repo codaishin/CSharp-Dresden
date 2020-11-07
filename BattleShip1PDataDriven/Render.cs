@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace BattleShip1PDataDriven
@@ -28,43 +29,51 @@ namespace BattleShip1PDataDriven
 			return result;
 		}
 
-		public static void Head(in int sizeX, in int sizeY)
+		private static IEnumerable<string> Head(int sizeX, int sizeY)
 		{
 			string prefix = "    ";
-			Console.WriteLine($"{prefix}{Render.ColumnNumbers(sizeX, " {0,-2}")}");
-			Console.WriteLine($"{prefix}------------------------------");
+			yield return $"{prefix}{Render.ColumnNumbers(sizeX, " {0,-2}")}";
+			yield return $"{prefix}------------------------------";
 		}
 
-		public static void BattleField(bool[,] battleField, Field[][] ships)
+		private static
+		string WorldHorizontal(bool[,] world, int y, int sizeX, Field[][] ships)
 		{
-			int sizeX = battleField.GetLength(0);
-			int sizeY = battleField.GetLength(1);
+			string result = $"{(char)(65 + y)} | ";
+			for (int x  = 0; x < sizeX; ++x) {
+				Field field = new Field { x = x, y = y};
+				string content = Render.GetFieldContnet(field, world, ships);
+				result += $"[{content}]";
+			}
+			return result;
+		}
 
-			Render.Head(sizeX, sizeY);
+		public static IEnumerable<string> World(bool[,] world, Field[][] ships)
+		{
+			int sizeX = world.GetLength(0);
+			int sizeY = world.GetLength(1);
+
+			foreach (string line in Render.Head(sizeX, sizeY)) {
+				yield return line;
+			}
 			for (int y = 0; y < sizeY; ++y) {
-				Console.Write($"{(char)(65 + y)} | ");
-				for (int x  = 0; x < sizeX; ++x) {
-					Field field = new Field { x = x, y = y};
-					string content = Render.GetFieldContnet(field, battleField, ships);
-					Console.Write($"[{content}]");
-				}
-				Console.WriteLine();
+				yield return Render.WorldHorizontal(world, y, sizeX, ships);
 			}
 		}
 
-		public static void Hits(in Field[][] ships)
+		public static IEnumerable<string> Hits(Field[][] ships)
 		{
 			for (int i = 0; i < ships.Length; ++i) {
 				Field[] ship = ships[i];
 				int hitCount = ship.Sum(f => f.hit ? 1 : 0);
-				Console.WriteLine($"Ship {i + 1}: {hitCount}/{ship.Length}");
+				yield return $"Ship {i + 1}: {hitCount}/{ship.Length}";
 			}
 		}
 
-		public static void DebugRenderShips(in Field[][] ships)
+		public static IEnumerable<string> DebugRenderShips(Field[][] ships)
 		{
 			foreach (Field[] ship in ships) {
-				Console.WriteLine(string.Join(", ", ship));
+				yield return string.Join(", ", ship);
 			}
 		}
 	}

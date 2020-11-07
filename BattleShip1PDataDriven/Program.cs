@@ -6,8 +6,7 @@ namespace BattleShip1PDataDriven
 {
 	class Program
 	{
-		static void TryHit(in bool[,] battleField,
-		                   in Field[][] ships)
+		static void TryHitConsole(in bool[,] battleField, in Field[][] ships)
 		{
 			Console.Write("\nAttack field: ");
 
@@ -45,6 +44,15 @@ namespace BattleShip1PDataDriven
 			return ships;
 		}
 
+		static void RenderFrameToConsole(in bool[,] world, in Field[][] ships)
+		{
+			Console.WriteLine(string.Join("\n", Render.World(world, ships)));
+			Console.WriteLine("\nShips:");
+			Console.WriteLine(string.Join(" | ", Render.DebugRenderShips(ships)));
+			Console.WriteLine("\nShips hit:");
+			Console.WriteLine(string.Join("\n", Render.Hits(ships)));
+		}
+
 		static void Main(string[] args)
 		{
 			int worldSize = 10;
@@ -53,22 +61,11 @@ namespace BattleShip1PDataDriven
 			Field[][] ships = Program.NewShips(worldSize, worldSize);
 
 			while (Ship.AnyAllive(ships)) {
-				Console.Clear();
-				Render.BattleField(world, ships);
-				Render.DebugRenderShips(ships);
-				Console.WriteLine("\nShips hit:");
-				Render.Hits(ships);
-
-				Program.TryHit(world, ships);
+				Program.RenderFrameToConsole(world, ships);
+				Program.TryHitConsole(world, ships);
 				++attacks;
 			}
-
-			Console.Clear();
-			Render.BattleField(world, ships);
-			Render.DebugRenderShips(ships);
-			Console.WriteLine("\nShips hit:");
-			Render.Hits(ships);
-
+			Program.RenderFrameToConsole(world, ships);
 			Console.WriteLine($"You won with {attacks} attacks");
 		}
 	}

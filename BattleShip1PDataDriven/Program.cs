@@ -6,15 +6,15 @@ namespace BattleShip1PDataDriven
 	class Program
 	{
 		static void TryHit(in bool[,] battleField,
-		                   in (int x, int y)[][] ships,
+		                   in Field[][] ships,
 		                   in int[] hits)
 		{
 			Console.Write("\nAttack field: ");
 
 			string input = Console.ReadLine();
-			if (Input.StringToField(input, battleField, out int x, out int y)) {
-				battleField[x, y] = true;
-				if (Field.HasShip((x, y), ships, out int hit)) {
+			if (Input.StringToField(input, battleField, out Field field)) {
+				battleField[field.x, field.y] = true;
+				if (Field.HasShip(field, ships, out int hit)) {
 					++hits[hit];
 				}
 			} else {
@@ -25,10 +25,10 @@ namespace BattleShip1PDataDriven
 		}
 
 
-		static (int x, int y)[][] NewShips(in int size)
+		static Field[][] NewShips(in int size)
 		{
-			List<(int x, int y)> usedFields = new List<(int x, int y)>();
-			(int x, int y)[][] ships = new (int x, int y)[4][];
+			List<Field> usedFields = new List<Field>();
+			Field[][] ships = new Field[4][];
 			for (int i = 0; i < 4; ++i) {
 				ships[i] = Ship.Create(usedFields, i + 1, size);
 			}
@@ -40,12 +40,13 @@ namespace BattleShip1PDataDriven
 			int size = 10;
 			int attacks = 0;
 			bool[,] battleField = new bool[size,size];
-			(int x, int y)[][] ships = Program.NewShips(size);
+			Field[][] ships = Program.NewShips(size);
 			int[] hits = new int[ships.Length];
 
 			while (Ship.AnyAllive(ships, hits)) {
 				Console.Clear();
 				Render.BattleField(battleField, ships);
+				Render.DebugRenderShips(ships);
 				Console.WriteLine("\nShips hit:");
 				Render.Hits(ships, hits);
 
@@ -55,6 +56,7 @@ namespace BattleShip1PDataDriven
 
 			Console.Clear();
 			Render.BattleField(battleField, ships);
+			Render.DebugRenderShips(ships);
 			Console.WriteLine("\nShips hit:");
 			Render.Hits(ships, hits);
 

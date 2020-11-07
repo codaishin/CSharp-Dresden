@@ -4,9 +4,9 @@ namespace BattleShip1PDataDriven
 {
 	static class Render
 	{
-		private static string GetFieldContnet(in (int x, int y) field,
+		private static string GetFieldContnet(in Field field,
 		                                      in bool[,] battleField,
-		                                      in (int x, int y)[][] ships)
+		                                      in Field[][] ships)
 		{
 			if (battleField[field.x,field.y]) {
 				if (Field.HasShip(field, ships)) {
@@ -34,7 +34,7 @@ namespace BattleShip1PDataDriven
 			Console.WriteLine($"{prefix}------------------------------");
 		}
 
-		public static void BattleField(bool[,] battleField, (int x, int y)[][] ships)
+		public static void BattleField(bool[,] battleField, Field[][] ships)
 		{
 			int sizeX = battleField.GetLength(0);
 			int sizeY = battleField.GetLength(1);
@@ -43,14 +43,15 @@ namespace BattleShip1PDataDriven
 			for (int y = 0; y < sizeY; ++y) {
 				Console.Write($"{(char)(65 + y)} | ");
 				for (int x  = 0; x < sizeX; ++x) {
-					string content = Render.GetFieldContnet((x, y), battleField, ships);
+					Field field = new Field { x = x, y = y};
+					string content = Render.GetFieldContnet(field, battleField, ships);
 					Console.Write($"[{content}]");
 				}
 				Console.WriteLine();
 			}
 		}
 
-		public static void Hits(in (int x, int y)[][] ships, in int[] hits)
+		public static void Hits(in Field[][] ships, in int[] hits)
 		{
 			for (int i = 0; i < hits.Length; ++i) {
 				int hitCount = Math.Min(hits[i], ships[i].Length);
@@ -58,9 +59,9 @@ namespace BattleShip1PDataDriven
 			}
 		}
 
-		public static void DebugRenderShips(in (int x, int y)[][] ships)
+		public static void DebugRenderShips(in Field[][] ships)
 		{
-			foreach ((int x, int y)[] ship in ships) {
+			foreach (Field[] ship in ships) {
 				Console.WriteLine(string.Join(", ", ship));
 			}
 		}

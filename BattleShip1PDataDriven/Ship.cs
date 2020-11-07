@@ -5,31 +5,34 @@ namespace BattleShip1PDataDriven
 {
 	static class Ship
 	{
-		public static (int x, int y)[] Create(in List<(int x, int y)> usedFields,
-		                                      in int shipSize,
-		                                      in int battleFieldSize)
+		public static Field[] Create(in List<Field> usedFields,
+		                             in int shipSize,
+		                             in int battleFieldSize)
 		{
 			Random rand = new Random();
 			int startX = rand.Next(0, battleFieldSize - shipSize + 1);
 			int startY = rand.Next(0, battleFieldSize - shipSize + 1);
 			int dir = rand.Next(0, 2);
-			(int x, int y)[] ship = new (int x, int y)[shipSize];
+			Field[] ship = new Field[shipSize];
 
 			for (int i = 0; i < shipSize; ++i) {
-				ship[i] = dir == 0 ? (startX + i, startY) : (startX, startY + i);
+				ship[i] = new Field {
+					x = dir == 0 ? startX + i : startX,
+					y = dir == 1 ? startY + i : startY,
+				};
 			}
-			foreach ((int x, int y) field in ship) {
+			foreach (Field field in ship) {
 				if (usedFields.Contains(field)) {
 					return Ship.Create(usedFields, shipSize, battleFieldSize);
 				}
 			}
-			foreach ((int x, int y) field in ship) {
+			foreach (Field field in ship) {
 				usedFields.Add(field);
 			}
 			return ship;
 		}
 
-		public static bool AnyAllive((int x, int y)[][] ships, int[] hits)
+		public static bool AnyAllive(Field[][] ships, int[] hits)
 		{
 			for (int i = 0; i < hits.Length; ++i) {
 				if (hits[i] < ships[i].Length) {

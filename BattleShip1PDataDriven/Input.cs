@@ -20,16 +20,17 @@ namespace BattleShip1PDataDriven
 
 		public static bool StringToField(in string value,
 		                                 in bool[,] battleField,
-		                                 out int x, out int y)
+		                                 out Field field)
 		{
+			int x, y;
 			if (Input.CharToNum(value[0], battleField.GetLength(1), out y) &&
 			    int.TryParse(value.Substring(1), out x) &&
 					x > 0 && x <= battleField.GetLength(0)) {
 				x -= 1;
+				field = new Field{ x = x, y = y };
 				return true;
 			}
-			x = default;
-			y = default;
+			field = default;
 			return false;
 		}
 	}

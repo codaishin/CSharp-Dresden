@@ -7,11 +7,20 @@ namespace BattleShip1PDataDriven
 	{
 		static bool HasShip(in (int x, int y) field, in (int x, int y)[][] ships)
 		{
-			foreach ((int x, int y)[] ship in ships) {
-				if (ship.Contains(field)) {
+			return Program.HasShip(field, ships, out _);
+		}
+
+		static bool HasShip(in (int x, int y) field,
+		                    in (int x, int y)[][] ships,
+		                    out int hit)
+		{
+			for (int i = 0; i < ships.Length; ++i) {
+				if (ships[i].Contains(field)) {
+					hit = i;
 					return true;
 				}
 			}
+			hit = default;
 			return false;
 		}
 
@@ -61,6 +70,14 @@ namespace BattleShip1PDataDriven
 			}
 		}
 
+		static void RenderHits(in (int x, int y)[][] ships, in int[] hits)
+		{
+			for (int i = 0; i < hits.Length; ++i) {
+				int hitCount = Math.Min(hits[i], ships[i].Length);
+				Console.WriteLine($"Ship {i + 1}: {hitCount}/{ships[i].Length}");
+			}
+		}
+
 		static bool CharToY(in char value, int sizeY, out int y)
 		{
 			y = value - 65;
@@ -90,13 +107,18 @@ namespace BattleShip1PDataDriven
 			return false;
 		}
 
-		static void TryHit(in bool[,] battleField)
+		static void TryHit(in bool[,] battleField,
+		                   in (int x, int y)[][] ships,
+		                   in int[] hits)
 		{
 			Console.Write("\nAttack field: ");
 
 			string input = Console.ReadLine();
 			if (Program.StringToField(input, battleField, out int x, out int y)) {
 				battleField[x, y] = true;
+				if (Program.HasShip((x, y), ships, out int hit)) {
+					++hits[hit];
+				}
 			} else {
 				Console.WriteLine("Input not understood.");
 				Console.Write("Press any key to continue ...");
@@ -104,9 +126,20 @@ namespace BattleShip1PDataDriven
 			}
 		}
 
+		static bool AnyShipAllive((int x, int y)[][] ships, int[] hits)
+		{
+			for (int i = 0; i < hits.Length; ++i) {
+				if (hits[i] < ships[i].Length) {
+					return true;
+				}
+			}
+			return false;
+		}
+
 		static void Main(string[] args)
 		{
 			int size = 10;
+			int attacks = 0;
 			bool[,] battleField = new bool[size,size];
 			(int x, int y)[][] ships = new (int, int)[][] {
 				new (int, int)[] { (1, 1) },
@@ -114,13 +147,24 @@ namespace BattleShip1PDataDriven
 				new (int, int)[] { (3, 3), (4, 3), (5, 3) },
 				new (int, int)[] { (6, 6), (6, 7), (6, 8), (6, 9) },
 			};
+			int[] hits = new int[4];
 
-			while (true) {
+			while (Program.AnyShipAllive(ships, hits)) {
 				Console.Clear();
 				Program.RenderBattleField(battleField, ships);
+				Console.WriteLine("\nShips hit:");
+				Program.RenderHits(ships, hits);
 
-				Program.TryHit(battleField);
+				Program.TryHit(battleField, ships, hits);
+				++attacks;
 			}
+
+			Console.Clear();
+			Program.RenderBattleField(battleField, ships);
+			Console.WriteLine("\nShips hit:");
+			Program.RenderHits(ships, hits);
+
+			Console.WriteLine($"You won with {attacks} attacks");
 		}
 	}
 }

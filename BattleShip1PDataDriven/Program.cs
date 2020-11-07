@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace BattleShip1PDataDriven
@@ -136,24 +137,61 @@ namespace BattleShip1PDataDriven
 			return false;
 		}
 
+		static void DebugRenderShips(in (int x, int y)[][] ships)
+		{
+			foreach ((int x, int y)[] ship in ships) {
+				Console.WriteLine(string.Join(", ", ship));
+			}
+		}
+
+		static (int x, int y)[] NewShip(in List<(int x, int y)> usedFields,
+		                                in int shipSize,
+		                                in int battleFieldSize)
+		{
+			Random rand = new Random();
+			int startX = rand.Next(0, battleFieldSize - shipSize + 1);
+			int startY = rand.Next(0, battleFieldSize - shipSize + 1);
+			int dir = rand.Next(0, 2);
+			(int x, int y)[] ship = new (int x, int y)[shipSize];
+
+			for (int i = 0; i < shipSize; ++i) {
+				ship[i] = dir == 0 ? (startX + i, startY) : (startX, startY + i);
+			}
+			foreach ((int x, int y) field in ship) {
+				if (usedFields.Contains(field)) {
+					return Program.NewShip(usedFields, shipSize, battleFieldSize);
+				}
+			}
+			foreach ((int x, int y) field in ship) {
+				usedFields.Add(field);
+			}
+			return ship;
+		}
+
+		static (int x, int y)[][] NewShips(in int size)
+		{
+			List<(int x, int y)> usedFields = new List<(int x, int y)>();
+			(int x, int y)[][] ships = new (int x, int y)[4][];
+			for (int i = 0; i < 4; ++i) {
+				ships[i] = Program.NewShip(usedFields, i + 1, size);
+			}
+			return ships;
+		}
+
 		static void Main(string[] args)
 		{
 			int size = 10;
 			int attacks = 0;
 			bool[,] battleField = new bool[size,size];
-			(int x, int y)[][] ships = new (int, int)[][] {
-				new (int, int)[] { (1, 1) },
-				new (int, int)[] { (2, 2), (2, 3) },
-				new (int, int)[] { (3, 3), (4, 3), (5, 3) },
-				new (int, int)[] { (6, 6), (6, 7), (6, 8), (6, 9) },
-			};
-			int[] hits = new int[4];
+			(int x, int y)[][] ships = Program.NewShips(size);
+			int[] hits = new int[ships.Length];
 
 			while (Program.AnyShipAllive(ships, hits)) {
 				Console.Clear();
 				Program.RenderBattleField(battleField, ships);
 				Console.WriteLine("\nShips hit:");
 				Program.RenderHits(ships, hits);
+				Program.DebugRenderShips(ships);
 
 				Program.TryHit(battleField, ships, hits);
 				++attacks;

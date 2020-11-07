@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
 
 namespace BattleShip1PDataDriven
@@ -32,10 +33,10 @@ namespace BattleShip1PDataDriven
 			return ship;
 		}
 
-		public static bool AnyAllive(Field[][] ships, int[] hits)
+		public static bool AnyAllive(Field[][] ships)
 		{
-			for (int i = 0; i < hits.Length; ++i) {
-				if (hits[i] < ships[i].Length) {
+			foreach (Field[] ship in ships) {
+				if (ship.Where(field => !field.hit).Any()) {
 					return true;
 				}
 			}

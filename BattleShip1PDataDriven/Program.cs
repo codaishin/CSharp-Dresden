@@ -6,16 +6,15 @@ namespace BattleShip1PDataDriven
 	class Program
 	{
 		static void TryHit(in bool[,] battleField,
-		                   in Field[][] ships,
-		                   in int[] hits)
+		                   in Field[][] ships)
 		{
 			Console.Write("\nAttack field: ");
 
 			string input = Console.ReadLine();
 			if (Input.StringToField(input, battleField, out Field field)) {
 				battleField[field.x, field.y] = true;
-				if (Field.HasShip(field, ships, out int hit)) {
-					++hits[hit];
+				if (Field.HasShip(field, ships, out Field[] ship, out int fieldIndex)) {
+					ship[fieldIndex].hit = true;
 				}
 			} else {
 				Console.WriteLine("Input not understood.");
@@ -23,7 +22,6 @@ namespace BattleShip1PDataDriven
 				Console.ReadKey();
 			}
 		}
-
 
 		static Field[][] NewShips(in int size)
 		{
@@ -41,16 +39,15 @@ namespace BattleShip1PDataDriven
 			int attacks = 0;
 			bool[,] battleField = new bool[size,size];
 			Field[][] ships = Program.NewShips(size);
-			int[] hits = new int[ships.Length];
 
-			while (Ship.AnyAllive(ships, hits)) {
+			while (Ship.AnyAllive(ships)) {
 				Console.Clear();
 				Render.BattleField(battleField, ships);
 				Render.DebugRenderShips(ships);
 				Console.WriteLine("\nShips hit:");
-				Render.Hits(ships, hits);
+				Render.Hits(ships);
 
-				Program.TryHit(battleField, ships, hits);
+				Program.TryHit(battleField, ships);
 				++attacks;
 			}
 
@@ -58,7 +55,7 @@ namespace BattleShip1PDataDriven
 			Render.BattleField(battleField, ships);
 			Render.DebugRenderShips(ships);
 			Console.WriteLine("\nShips hit:");
-			Render.Hits(ships, hits);
+			Render.Hits(ships);
 
 			Console.WriteLine($"You won with {attacks} attacks");
 		}

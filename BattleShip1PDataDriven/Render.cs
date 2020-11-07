@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 
 namespace BattleShip1PDataDriven
 {
@@ -51,11 +52,12 @@ namespace BattleShip1PDataDriven
 			}
 		}
 
-		public static void Hits(in Field[][] ships, in int[] hits)
+		public static void Hits(in Field[][] ships)
 		{
-			for (int i = 0; i < hits.Length; ++i) {
-				int hitCount = Math.Min(hits[i], ships[i].Length);
-				Console.WriteLine($"Ship {i + 1}: {hitCount}/{ships[i].Length}");
+			for (int i = 0; i < ships.Length; ++i) {
+				Field[] ship = ships[i];
+				int hitCount = ship.Sum(f => f.hit ? 1 : 0);
+				Console.WriteLine($"Ship {i + 1}: {hitCount}/{ship.Length}");
 			}
 		}
 

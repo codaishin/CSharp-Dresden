@@ -44,11 +44,15 @@ namespace BattleShip1PDataDriven
 			return ships;
 		}
 
-		static void RenderFrameToConsole(in bool[,] world, in Field[][] ships)
+		static
+		void FrameToConsole(in bool[,] world, in Field[][] ships, in bool cheat)
 		{
+			Console.Clear();
 			Console.WriteLine(string.Join("\n", Render.World(world, ships)));
-			Console.WriteLine("\nShips:");
-			Console.WriteLine(string.Join(" | ", Render.DebugRenderShips(ships)));
+			if (cheat) {
+				Console.WriteLine("\nShips:");
+				Console.WriteLine(string.Join(" | ", Render.DebugRenderShips(ships)));
+			}
 			Console.WriteLine("\nShips hit:");
 			Console.WriteLine(string.Join("\n", Render.Hits(ships)));
 		}
@@ -58,14 +62,15 @@ namespace BattleShip1PDataDriven
 			int worldSize = 10;
 			int attacks = 0;
 			bool[,] world = new bool[worldSize,worldSize];
+			bool cheat = args.Contains("--cheat");
 			Field[][] ships = Program.NewShips(worldSize, worldSize);
 
 			while (Ship.AnyAllive(ships)) {
-				Program.RenderFrameToConsole(world, ships);
+				Program.FrameToConsole(world, ships, cheat);
 				Program.TryHitConsole(world, ships);
 				++attacks;
 			}
-			Program.RenderFrameToConsole(world, ships);
+			Program.FrameToConsole(world, ships, cheat);
 			Console.WriteLine($"You won with {attacks} attacks");
 		}
 	}

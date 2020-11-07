@@ -7,10 +7,10 @@ namespace BattleShip1PDataDriven
 	static class Render
 	{
 		private static string GetFieldContent(in Field field,
-		                                      in bool[,] battleField,
+		                                      in bool[,] world,
 		                                      in Field[][] ships)
 		{
-			if (battleField[field.x,field.y]) {
+			if (world[field.x,field.y]) {
 				if (Field.HasShip(field, ships)) {
 					return "X";
 				} else {

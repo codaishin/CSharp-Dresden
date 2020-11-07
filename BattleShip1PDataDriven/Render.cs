@@ -6,7 +6,7 @@ namespace BattleShip1PDataDriven
 {
 	static class Render
 	{
-		private static string GetFieldContnet(in Field field,
+		private static string GetFieldContent(in Field field,
 		                                      in bool[,] battleField,
 		                                      in Field[][] ships)
 		{
@@ -42,7 +42,7 @@ namespace BattleShip1PDataDriven
 			string result = $"{(char)(65 + y)} | ";
 			for (int x  = 0; x < sizeX; ++x) {
 				Field field = new Field { x = x, y = y};
-				string content = Render.GetFieldContnet(field, world, ships);
+				string content = Render.GetFieldContent(field, world, ships);
 				result += $"[{content}]";
 			}
 			return result;

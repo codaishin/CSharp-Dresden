@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace BattleShip1PDataDriven
 {
@@ -23,36 +24,47 @@ namespace BattleShip1PDataDriven
 			}
 		}
 
-		static Field[][] NewShips(in int size)
+		static
+		Field[] NewShip(in int shipSize, in List<Field> fields, in int worldSize)
+		{
+			Field[] ship = Ship.Create(shipSize, worldSize);
+			if (fields.Intersect(ship).Any()) {
+				return Program.NewShip(shipSize, fields, worldSize);
+			}
+			return ship;
+		}
+
+		static Field[][] NewShips(in int size, in int worldSize)
 		{
 			List<Field> usedFields = new List<Field>();
 			Field[][] ships = new Field[4][];
 			for (int i = 0; i < 4; ++i) {
-				ships[i] = Ship.Create(usedFields, i + 1, size);
+				ships[i] = Program.NewShip(i + 1, usedFields, worldSize);
+				usedFields.AddRange(ships[i]);
 			}
 			return ships;
 		}
 
 		static void Main(string[] args)
 		{
-			int size = 10;
+			int worldSize = 10;
 			int attacks = 0;
-			bool[,] battleField = new bool[size,size];
-			Field[][] ships = Program.NewShips(size);
+			bool[,] world = new bool[worldSize,worldSize];
+			Field[][] ships = Program.NewShips(worldSize, worldSize);
 
 			while (Ship.AnyAllive(ships)) {
 				Console.Clear();
-				Render.BattleField(battleField, ships);
+				Render.BattleField(world, ships);
 				Render.DebugRenderShips(ships);
 				Console.WriteLine("\nShips hit:");
 				Render.Hits(ships);
 
-				Program.TryHit(battleField, ships);
+				Program.TryHit(world, ships);
 				++attacks;
 			}
 
 			Console.Clear();
-			Render.BattleField(battleField, ships);
+			Render.BattleField(world, ships);
 			Render.DebugRenderShips(ships);
 			Console.WriteLine("\nShips hit:");
 			Render.Hits(ships);

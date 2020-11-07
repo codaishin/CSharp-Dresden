@@ -6,31 +6,39 @@ namespace BattleShip1PDataDriven
 {
 	static class Ship
 	{
-		public static Field[] Create(in List<Field> usedFields,
-		                             in int shipSize,
-		                             in int battleFieldSize)
-		{
-			Random rand = new Random();
-			int startX = rand.Next(0, battleFieldSize - shipSize + 1);
-			int startY = rand.Next(0, battleFieldSize - shipSize + 1);
-			int dir = rand.Next(0, 2);
-			Field[] ship = new Field[shipSize];
+		private static Random rand = new Random();
 
-			for (int i = 0; i < shipSize; ++i) {
-				ship[i] = new Field {
-					x = dir == 0 ? startX + i : startX,
-					y = dir == 1 ? startY + i : startY,
-				};
+		private static Func<Field, Field> VerticalOrHorizontalAdvance()
+		{
+			if (Ship.rand.Next(0, 2) == 0) {
+				return Field.GetNextHorizontal;
 			}
-			foreach (Field field in ship) {
-				if (usedFields.Contains(field)) {
-					return Ship.Create(usedFields, shipSize, battleFieldSize);
-				}
+			return Field.GetNextVertical;
+		}
+
+		private static
+		IEnumerable<Field> CreateOn(Field start)
+		{
+			Field field = start;
+			Func<Field, Field> getNextField = Ship.VerticalOrHorizontalAdvance();
+
+			while (true) {
+				yield return field;
+				field = getNextField(field);
 			}
-			foreach (Field field in ship) {
-				usedFields.Add(field);
-			}
-			return ship;
+		}
+
+		public static Field[] Create(in int shipSize, in int worldSitze)
+		{
+			Field start = new Field {
+				x = Ship.rand.Next(0, worldSitze - shipSize + 1),
+				y = Ship.rand.Next(0, worldSitze - shipSize + 1),
+			};
+
+			return Ship
+				.CreateOn(start)
+				.Take(shipSize)
+				.ToArray();
 		}
 
 		public static bool AnyAllive(Field[][] ships)

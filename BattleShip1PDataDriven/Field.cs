@@ -33,5 +33,15 @@ namespace BattleShip1PDataDriven
 			ship = default;
 			return false;
 		}
+
+		public static Field GetNextHorizontal(Field field)
+		{
+			return new Field { x = field.x + 1, y = field.y };
+		}
+
+		public static Field GetNextVertical(Field field)
+		{
+			return new Field { x = field.x, y = field.y + 1 };
+		}
 	}
 }
